@@ -7,6 +7,7 @@
 
 import UIKit
 import Photos
+import SVProgressHUD
 
 class ContactDetailViewController: UIViewController {
 
@@ -22,7 +23,10 @@ class ContactDetailViewController: UIViewController {
 
     func setupUI() {
         if let photo = selectedPhoto {
-            wallpaperImageView.loadImage(from: photo.largeImageURL, placeholder: UIImage(systemName: "photo"))
+            SVProgressHUD.show(withStatus: "Loading image...")
+            wallpaperImageView.loadImage(from: photo.largeImageURL, placeholder: UIImage(systemName: "photo")) {
+                SVProgressHUD.dismiss()
+            }
             title = photo.user
         }
         wallpaperImageView.contentMode = .scaleAspectFit
@@ -52,9 +56,9 @@ class ContactDetailViewController: UIViewController {
     
     @objc func imageSaved(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
-            showAlert(title: "Error", message: error.localizedDescription)
+            SVProgressHUD.showError(withStatus: error.localizedDescription)
         } else {
-            showAlert(title: "Saved!", message: "Image saved to your photo library.")
+            SVProgressHUD.showSuccess(withStatus: "Saved!")
         }
     }
     

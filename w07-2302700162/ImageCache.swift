@@ -24,28 +24,36 @@ class ImageCache {
 
 // MARK: - UIImageView Extension for async image loading
 extension UIImageView {
-    func loadImage(from urlString: String, placeholder: UIImage? = nil) {
+    func loadImage(from urlString: String, placeholder: UIImage? = nil, completion: (() -> Void)? = nil) {
         self.image = placeholder
         
         // Check cache first
         if let cachedImage = ImageCache.shared.getImage(for: urlString) {
             self.image = cachedImage
+            completion?()
             return
         }
         
-        guard let url = URL(string: urlString) else { return }
+        guard let url = URL(string: urlString) else {
+            completion?()
+            return
+        }
         
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self,
                   let data = data,
                   error == nil,
-                  let image = UIImage(data: data) else { return }
+                  let image = UIImage(data: data) else {
+                DispatchQueue.main.async { completion?() }
+                return
+            }
             
             // Save to cache
             ImageCache.shared.setImage(image, for: urlString)
             
             DispatchQueue.main.async {
                 self.image = image
+                completion?()
             }
         }.resume()
     }

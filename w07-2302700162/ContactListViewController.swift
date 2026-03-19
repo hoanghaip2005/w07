@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SVProgressHUD
 
 class ContactListViewController: UITableViewController, UISearchBarDelegate {
     
@@ -37,12 +38,16 @@ class ContactListViewController: UITableViewController, UISearchBarDelegate {
         guard !isLoading else { return }
         isLoading = true
         
+        // Show loading HUD
+        SVProgressHUD.show(withStatus: "Loading...")
+        
         PhotoService.fetchPhotos(page: currentPage, query: currentQuery) { [weak self] photos, error in
             guard let self = self else { return }
             self.isLoading = false
             
             DispatchQueue.main.async {
                 self.refreshControl?.endRefreshing()
+                SVProgressHUD.dismiss()
                 
                 if let error = error {
                     print("Error loading photos: \(error.localizedDescription)")
