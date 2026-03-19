@@ -10,7 +10,7 @@ import Foundation
 class PhotoService {
     
     // Pixabay API Key - Đăng ký miễn phí tại https://pixabay.com/api/docs/
-    static let apiKey = "46841801-55f52ed498b37a73e413b2e25"
+    static let apiKey = "36447272-398ecc81681b5a45d6745b451"
     static let baseURL = "https://pixabay.com/api/"
     
     // Fetch photos (general or search)
